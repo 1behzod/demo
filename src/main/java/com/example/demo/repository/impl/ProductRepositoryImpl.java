@@ -6,7 +6,8 @@ import com.example.demo.filter.ResultList;
 import com.example.demo.repository.custom.ProductRepositoryCustom;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
+
+import jakarta.persistence.TypedQuery;
 
 import java.util.Collections;
 
@@ -20,45 +21,45 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     public ResultList<Product> getResultList(BaseFilter filter) {
         ResultList<Product> resultList = new ResultList<>();
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT p.* FROM product p ");
-        sql.append("WHERE 1=1");
+        sql.append("select p from Product p ");
+        sql.append("where 1=1");
 
         if (filter.isSearchNotEmpty()) {
-            sql.append(" AND LOWER(p.name) LIKE :searchKey ");
+            sql.append(" and lower(p.name) ").append(filter.getLikeSearch());
         }
         if (filter.getCategoryId() != null) {
-            sql.append(" AND p.category_id = :categoryId ");
-        }
-        sql.append(" ORDER BY p.")
-                .append(filter.getOrderBy())
-                .append(" ")
-                .append(filter.getSortOrder());
-
-        String paginatedSql = sql + " LIMIT :limit OFFSET :offset";
-
-        String countSql = "SELECT COUNT(*) FROM (" + sql + ") AS countQuery";
-        Long totalCount = ((Number) entityManager.createNativeQuery(countSql).getSingleResult()).longValue();
-
-        if (totalCount == 0) {
-            resultList.setList(Collections.emptyList());
-            resultList.setCount(0L);
-            return resultList;
+            sql.append(" and p.category.id = :categoryId");
         }
 
-        Query query = entityManager.createNativeQuery(paginatedSql, Product.class);
+        String countSql = sql.toString().replaceFirst("select p", "select count(p.id)");
+
+        sql.append(" order by p.").append(filter.getOrderBy());
+        sql.append(" ").append(filter.getSortOrder());
+
+        TypedQuery<Product> query = entityManager
+                .createQuery(sql.toString(), Product.class)
+                .setFirstResult(filter.getStart())
+                .setMaxResults(filter.getSize());
+
+        TypedQuery<Long> countQuery = entityManager.createQuery(countSql, Long.class);
+
         if (filter.isSearchNotEmpty()) {
-            query.setParameter("searchKey", "%" + filter.getSearchFor().toLowerCase() + "%");
+            query.setParameter("searchKey", filter.getSearchFor());
+            countQuery.setParameter("searchKey", filter.getSearchFor());
         }
         if (filter.getCategoryId() != null) {
             query.setParameter("categoryId", filter.getCategoryId());
+            countQuery.setParameter("categoryId", filter.getCategoryId());
         }
-        query.setParameter("limit", filter.getSize());
-        query.setParameter("offset", filter.getStart());
 
-        resultList.setList(query.getResultList());
-        resultList.setCount(totalCount);
+        Long count = countQuery.getSingleResult();
+        if (count > 0) {
+            resultList.setList(query.getResultList());
+            resultList.setCount(count);
+        }
 
         return resultList;
     }
+
 
 }

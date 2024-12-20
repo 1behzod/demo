@@ -1,7 +1,6 @@
 package com.example.demo.config;
 
-import com.example.demo.domain.Category;
-import com.example.demo.domain.Product;
+import com.example.demo.constants.Constants;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
@@ -35,8 +34,8 @@ public class CacheConfiguration {
     @Bean
     public JCacheManagerCustomizer jCacheManagerCustomizer() {
         return cacheManager -> {
-            createCache(cacheManager, Category.class.getName(), 3600, 1000);
-            createCache(cacheManager, Product.class.getName(), 3600, 100);
+            createCache(cacheManager, Constants.CATEGORY_LIST, 3600, 1000);
+            createCache(cacheManager, Constants.PRODUCT_LIST, 3600, 100);
         };
     }
 

@@ -11,11 +11,6 @@ public class CashingApplication {
     public static void main(String[] args) {
         SpringApplication.run(CashingApplication.class, args);
 
-        //Used all topics except logging
-        //Category getList() method
-        //NativeQuery in ProductCustomImpl
-        //Application YML
-        //Formatted exceptions
     }
 
 }

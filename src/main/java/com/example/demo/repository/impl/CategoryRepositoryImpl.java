@@ -14,6 +14,7 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
     EntityManager entityManager;
 
     @Override
+    //   @Cacheable(cacheNames = Constants.CATEGORY_LIST)
     public ResultList<Category> getResultList(BaseFilter filter) {
 
         ResultList<Category> resultList = new ResultList<>();

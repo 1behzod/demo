@@ -2,7 +2,6 @@ package com.example.demo.service;
 
 import com.example.demo.domain.Category;
 import com.example.demo.dto.CategoryDTO;
-import com.example.demo.dto.ProductDTO;
 import com.example.demo.filter.BaseFilter;
 import com.example.demo.filter.ResultList;
 import com.example.demo.repository.CategoryRepository;
@@ -12,7 +11,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -47,20 +45,21 @@ public class CategoryService extends BaseService {
         return category.getId();
     }
 
-  /*  public Page<Category> getList(BaseFilter filter) {
-        ResultList<Category> resultList = categoryRepository.getResultList(filter);
-        List<CategoryDTO> result = resultList
-                .getList()
-                .stream()
-                .map(category -> {
-                    CategoryDTO categoryDTO = new CategoryDTO();
-                    categoryDTO.setId(category.getId());
-                    categoryDTO.setName(category.getName());
-                    return categoryDTO;
-                })
-                .collect(Collectors.toList());
-        return new PageImpl<>(result, filter.getOrderedPageable(), resultList.getCount());
-    }*/
+    /*  public Page<Category> getList(BaseFilter filter) {
+          ResultList<Category> resultList = categoryRepository.getResultList(filter);
+          List<CategoryDTO> result = resultList
+                  .getList()
+                  .stream()
+                  .map(category -> {
+                      CategoryDTO categoryDTO = new CategoryDTO();
+                      categoryDTO.setId(category.getId());
+                      categoryDTO.setName(category.getName());
+                      return categoryDTO;
+                  })
+                  .collect(Collectors.toList());
+          return new PageImpl<>(result, filter.getOrderedPageable(), resultList.getCount());
+      }*/
+
 
     public Page<CategoryDTO> getList(BaseFilter filter) {
         ResultList<Category> resultList = categoryRepository.getResultList(filter);
@@ -74,7 +73,6 @@ public class CategoryService extends BaseService {
 
         return new PageImpl<>(dtoList, filter.getOrderedPageable(), resultList.getCount());
     }
-
 
 
 }

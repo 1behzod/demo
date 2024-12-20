@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Cache;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
@@ -27,13 +28,13 @@ import java.util.stream.Collectors;
 public class ProductService extends BaseService {
 
     ProductRepository productRepository;
-     CacheService cacheService;
+    CacheService cacheService;
 
     private void validate(ProductDTO productDTO) {
         if (!StringUtils.hasLength(productDTO.getName())) {
             throw badRequestExceptionThrow("Product name is required").get();
         }
-        if (!StringUtils.hasLength(String.valueOf(productDTO.getCategoryId()))) {
+        if (productDTO.getCategoryId() == null) {
             throw badRequestExceptionThrow("Category id is required").get();
         }
         if (productRepository.existsByName(productDTO.getName())) {
@@ -53,23 +54,23 @@ public class ProductService extends BaseService {
     }
 
     public Page<ProductDTO> getList(BaseFilter filter) {
-        cacheService.getCaches();
-        productRepository.findById(1L).ifPresent(product -> {
-            log.info("Product: {}",product.getName());
-        });
-//        ResultList<Product> resultList = productRepository.getResultList(filter);
-//        List<ProductDTO> result = resultList
-//                .getList()
-//                .stream()
-//                .map(product -> {
-//                    ProductDTO productDTO = new ProductDTO();
-//                    productDTO.setId(product.getId());
-//                    productDTO.setName(product.getName());
-//                    productDTO.setCategoryId(product.getCategoryId());
-//                    productDTO.setPrice(product.getPrice());
-//                    return productDTO;
-//                })
-//                .collect(Collectors.toList());
+//        cacheService.getCaches();
+//        productRepository.findById(1L).ifPresent(product -> {
+//            log.info("Product: {}",product.getName());
+//        });
+        ResultList<Product> resultList = productRepository.getResultList(filter);
+        List<ProductDTO> result = resultList
+                .getList()
+                .stream()
+                .map(product -> {
+                    ProductDTO productDTO = new ProductDTO();
+                    productDTO.setId(product.getId());
+                    productDTO.setName(product.getName());
+                    productDTO.setCategoryId(product.getCategoryId());
+                    productDTO.setPrice(product.getPrice());
+                    return productDTO;
+                })
+                .collect(Collectors.toList());
         return new PageImpl<>(new ArrayList<>(), filter.getOrderedPageable(), 0);
 
     }
