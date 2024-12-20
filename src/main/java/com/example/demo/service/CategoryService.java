@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.constants.Constants;
 import com.example.demo.domain.Category;
 import com.example.demo.dto.CategoryDTO;
 import com.example.demo.filter.BaseFilter;
@@ -10,7 +9,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
@@ -48,7 +46,7 @@ public class CategoryService extends BaseService {
     }
 
     @Transactional
-    @CacheEvict(cacheNames = Constants.CATEGORY_LIST, allEntries = true)
+    //   @CacheEvict(cacheNames = Constants.CATEGORY_LIST, allEntries = true)
     public Long update(Long id, CategoryDTO categoryDTO) {
         Category category = categoryRepository.findById(id).orElseThrow(badRequestExceptionThrow("Category not found"));
         categoryDTO.setId(id);
@@ -61,8 +59,7 @@ public class CategoryService extends BaseService {
     }
 
     @Transactional
-    @CacheEvict(cacheNames = Constants.CATEGORY_LIST, allEntries = true)
-
+    //  @CacheEvict(cacheNames = Constants.CATEGORY_LIST, allEntries = true)
     public void delete(Long id) {
         if (!categoryRepository.existsById(id)) {
             throw badRequestExceptionThrow("Category not found").get();

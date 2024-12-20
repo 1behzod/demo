@@ -1,17 +1,12 @@
 package com.example.demo.repository.impl;
 
-import com.example.demo.constants.Constants;
 import com.example.demo.domain.Product;
 import com.example.demo.filter.BaseFilter;
 import com.example.demo.filter.ResultList;
 import com.example.demo.repository.custom.ProductRepositoryCustom;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-
 import jakarta.persistence.TypedQuery;
-import org.springframework.cache.annotation.Cacheable;
-
-import java.util.Collections;
 
 public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
@@ -20,7 +15,6 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
 
     @Override
-    @Cacheable(cacheNames = Constants.PRODUCT_LIST)
     public ResultList<Product> getResultList(BaseFilter filter) {
         ResultList<Product> resultList = new ResultList<>();
         StringBuilder sql = new StringBuilder();

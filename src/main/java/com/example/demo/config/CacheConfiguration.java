@@ -5,7 +5,6 @@ import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.jsr107.Eh107Configuration;
-
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
 import org.springframework.cache.annotation.EnableCaching;
@@ -36,6 +35,8 @@ public class CacheConfiguration {
         return cacheManager -> {
             createCache(cacheManager, Constants.CATEGORY_LIST, 3600, 1000);
             createCache(cacheManager, Constants.PRODUCT_LIST, 3600, 100);
+            createCache(cacheManager, Constants.PRODUCT_BY_ID, 3600, 100);
+            createCache(cacheManager, Constants.CATEGORY_BY_NAME, 3600, 100);
         };
     }
 
