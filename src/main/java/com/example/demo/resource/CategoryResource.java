@@ -28,6 +28,17 @@ public class CategoryResource {
     @GetMapping("/getList")
     public ResponseEntity<Page<CategoryDTO>> getList(@ParameterObject BaseFilter filter) {
         return ResponseEntity.ok(categoryService.getList(filter));
-
     }
+
+    @PutMapping("/{id}/update")
+    public ResponseEntity<Long> update(@PathVariable Long id, @RequestBody CategoryDTO categoryDTO) {
+        return ResponseEntity.ok(categoryService.update(id, categoryDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        categoryService.delete(id);
+        return ResponseEntity.ok().build();
+    }
+
 }

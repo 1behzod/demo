@@ -28,8 +28,17 @@ public class ProductResource {
     @GetMapping("/getList")
     public ResponseEntity<Page<ProductDTO>> getList(@ParameterObject BaseFilter filter) {
         return ResponseEntity.ok(productService.getList(filter));
-
     }
 
+    @PutMapping("/{id}/update")
+    public ResponseEntity<Long> update(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
+        return ResponseEntity.ok(productService.update(id, productDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        productService.delete(id);
+        return ResponseEntity.ok().build();
+    }
 
 }

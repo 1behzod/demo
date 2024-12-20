@@ -6,4 +6,5 @@ import com.example.demo.repository.custom.CategoryRepositoryCustom;
 public interface CategoryRepository extends BaseRepository<Category, Long>, CategoryRepositoryCustom {
 
     boolean existsByName(String name);
+
 }

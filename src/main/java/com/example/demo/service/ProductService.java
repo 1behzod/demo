@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.constants.Constants;
 import com.example.demo.domain.Product;
 import com.example.demo.dto.ProductDTO;
 import com.example.demo.filter.BaseFilter;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Cache;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
@@ -52,6 +54,30 @@ public class ProductService extends BaseService {
         productRepository.save(product);
         return product.getId();
     }
+
+    @Transactional
+    @CacheEvict(cacheNames = Constants.PRODUCT_LIST, allEntries = true)
+    public Long update(Long id, ProductDTO productDTO) {
+        Product product = productRepository.findById(id).orElseThrow(badRequestExceptionThrow("Product not found"));
+        product.setId(id);
+        this.validate(productDTO);
+
+        product.setName(productDTO.getName());
+        product.setPrice(productDTO.getPrice());
+        product.setCategoryId(productDTO.getCategoryId());
+        productRepository.save(product);
+        return product.getId();
+    }
+
+    @Transactional
+    @CacheEvict(cacheNames = Constants.PRODUCT_LIST, allEntries = true)
+    public void delete(Long id) {
+        if (!productRepository.existsById(id)) {
+            throw badRequestExceptionThrow("Product not found").get();
+        }
+        productRepository.deleteById(id);
+    }
+
 
     public Page<ProductDTO> getList(BaseFilter filter) {
 //        cacheService.getCaches();

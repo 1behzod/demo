@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.domain.Category;
+import com.example.demo.domain.Product;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -63,6 +65,19 @@ public class CacheService {
         if (cache != null) {
             cache.evict(key);
             //cache.remove(key); javax cache
+        }
+    }
+
+
+    public void evictCategory(Category category) {
+        if (category != null) {
+            this.evict(category.getName(), category.getId());
+        }
+    }
+
+    public void evictProduct(Product product) {
+        if (product != null) {
+            this.evict(product.getName(), product.getId());
         }
     }
 

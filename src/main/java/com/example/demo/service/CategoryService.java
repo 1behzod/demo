@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.constants.Constants;
 import com.example.demo.domain.Category;
 import com.example.demo.dto.CategoryDTO;
 import com.example.demo.filter.BaseFilter;
@@ -9,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
@@ -45,20 +47,28 @@ public class CategoryService extends BaseService {
         return category.getId();
     }
 
-    /*  public Page<Category> getList(BaseFilter filter) {
-          ResultList<Category> resultList = categoryRepository.getResultList(filter);
-          List<CategoryDTO> result = resultList
-                  .getList()
-                  .stream()
-                  .map(category -> {
-                      CategoryDTO categoryDTO = new CategoryDTO();
-                      categoryDTO.setId(category.getId());
-                      categoryDTO.setName(category.getName());
-                      return categoryDTO;
-                  })
-                  .collect(Collectors.toList());
-          return new PageImpl<>(result, filter.getOrderedPageable(), resultList.getCount());
-      }*/
+    @Transactional
+    @CacheEvict(cacheNames = Constants.CATEGORY_LIST, allEntries = true)
+    public Long update(Long id, CategoryDTO categoryDTO) {
+        Category category = categoryRepository.findById(id).orElseThrow(badRequestExceptionThrow("Category not found"));
+        categoryDTO.setId(id);
+        this.validate(categoryDTO);
+
+        category.setName(categoryDTO.getName());
+        categoryRepository.save(category);
+        return category.getId();
+
+    }
+
+    @Transactional
+    @CacheEvict(cacheNames = Constants.CATEGORY_LIST, allEntries = true)
+
+    public void delete(Long id) {
+        if (!categoryRepository.existsById(id)) {
+            throw badRequestExceptionThrow("Category not found").get();
+        }
+        categoryRepository.deleteById(id);
+    }
 
 
     public Page<CategoryDTO> getList(BaseFilter filter) {
@@ -73,6 +83,26 @@ public class CategoryService extends BaseService {
 
         return new PageImpl<>(dtoList, filter.getOrderedPageable(), resultList.getCount());
     }
+
+
+
+
+
+
+    /*  public Page<Category> getList(BaseFilter filter) {
+          ResultList<Category> resultList = categoryRepository.getResultList(filter);
+          List<CategoryDTO> result = resultList
+                  .getList()
+                  .stream()
+                  .map(category -> {
+                      CategoryDTO categoryDTO = new CategoryDTO();
+                      categoryDTO.setId(category.getId());
+                      categoryDTO.setName(category.getName());
+                      return categoryDTO;
+                  })
+                  .collect(Collectors.toList());
+          return new PageImpl<>(result, filter.getOrderedPageable(), resultList.getCount());
+      }*/
 
 
 }
